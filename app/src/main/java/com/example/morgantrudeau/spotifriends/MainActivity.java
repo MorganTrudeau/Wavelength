@@ -7,9 +7,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,7 +20,6 @@ import com.google.common.util.concurrent.SettableFuture;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Error;
-import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
@@ -183,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void onUserSelected(View view) {
-        Intent intent =  new Intent(this, UserActivity.class);
+        Intent intent =  new Intent(this, PlaylistActivity.class);
         intent.putExtra(CURRENT_USER_ID, m_currentUser.getId());
         if (m_currentUserDisplayName != null) {
             intent.putExtra(CURRENT_USER_DISPLAY_NAME, m_currentUserDisplayName);

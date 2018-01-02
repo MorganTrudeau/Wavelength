@@ -7,9 +7,12 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wrapper.spotify.Api;
 import com.wrapper.spotify.methods.UserPlaylistsRequest;
@@ -18,20 +21,17 @@ import com.wrapper.spotify.models.SimplePlaylist;
 
 import java.util.ArrayList;
 
-public class UserActivity extends AppCompatActivity {
+public class PlaylistActivity extends AppCompatActivity {
 
     private TextView m_TextMessage;
+    private ListView m_playlistsListView;
 
     private ApiManager m_apiManager = new ApiManager();
     private Api m_api = m_apiManager.getApi();
 
     //private String m_currentUserDisplayName = null;
     private String m_currentUserId = "";
-    private ArrayList<String> m_playlists = new ArrayList<>();
-
-//    private ArrayAdapter<String> m_playlistsAdapter =
-//            new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, m_playlists);
-
+    private ArrayList<PlaylistItem> m_playlistItems = new ArrayList<>();
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -56,9 +56,10 @@ public class UserActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user);
+        setContentView(R.layout.activity_playlists);
 
         m_TextMessage = (TextView) findViewById(R.id.message);
+        m_playlistsListView = (ListView) findViewById(R.id.playlistsListView);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
@@ -75,9 +76,14 @@ public class UserActivity extends AppCompatActivity {
 
             try {
                 final Page<SimplePlaylist> playlistsPage = request.get();
+                String name;
+                String id;
 
                 for (SimplePlaylist playlist : playlistsPage.getItems()) {
-                    m_playlists.add(playlist.getName());
+                    name = playlist.getName();
+                    id = playlist.getId();
+
+                    m_playlistItems.add(new PlaylistItem(id, name));
                 }
 
             } catch (Exception e) {
@@ -93,10 +99,21 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private void updatePlaylists() {
-        ArrayAdapter<String> m_playlistsAdapter =
-                new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, m_playlists);
-        ListView playlistsListView = findViewById(R.id.playlistsListView);
-        playlistsListView.setAdapter(m_playlistsAdapter);
+        ArrayAdapter<PlaylistItem> m_playlistsAdapter =
+                new ArrayAdapter<PlaylistItem>(this, android.R.layout.simple_list_item_1, m_playlistItems);
+        m_playlistsListView.setAdapter(m_playlistsAdapter);
+        final Intent intent = new Intent(this, SongsActivity.class);
+        m_playlistsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                    long id) {
+
+                PlaylistItem selectedPlaylist =  m_playlistItems.get(position);
+                intent.putExtra("playlistId", selectedPlaylist.getId());
+                intent.putExtra("currentUser", m_currentUserId);
+                startActivity(intent);
+            }
+        });
     }
 
 }

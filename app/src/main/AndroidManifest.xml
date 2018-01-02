@@ -38,13 +38,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".UserActivity"
-            android:parentActivityName=".MainActivity"
-            android:label="@string/title_activity_user">
-
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".MainActivity" /></activity>
+            android:name=".PlaylistActivity"
+            android:label="@string/title_activity_user"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity android:name=".SongsActivity"></activity>
     </application>
 
 </manifest>
