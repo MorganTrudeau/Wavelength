@@ -45,7 +45,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".SongsActivity"></activity>
+        <activity android:name=".SongsActivity" />
+        <activity android:name=".AddToPlaylistActivity"></activity>
     </application>
 
 </manifest>

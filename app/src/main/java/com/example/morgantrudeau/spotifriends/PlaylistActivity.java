@@ -33,26 +33,6 @@ public class PlaylistActivity extends AppCompatActivity {
     private String m_currentUserId = "";
     private ArrayList<PlaylistItem> m_playlistItems = new ArrayList<>();
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    m_TextMessage.setText(R.string.title_home);
-                    return true;
-                case R.id.navigation_dashboard:
-                    m_TextMessage.setText(R.string.title_dashboard);
-                    return true;
-                case R.id.navigation_notifications:
-                    m_TextMessage.setText(R.string.title_notifications);
-                    return true;
-            }
-            return false;
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,8 +40,6 @@ public class PlaylistActivity extends AppCompatActivity {
 
         m_TextMessage = (TextView) findViewById(R.id.message);
         m_playlistsListView = (ListView) findViewById(R.id.playlistsListView);
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         new GetPlaylists().execute();
     }
@@ -84,6 +62,7 @@ public class PlaylistActivity extends AppCompatActivity {
                     id = playlist.getId();
 
                     m_playlistItems.add(new PlaylistItem(id, name));
+                    success = true;
                 }
 
             } catch (Exception e) {

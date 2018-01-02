@@ -24,6 +24,7 @@ import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 import com.wrapper.spotify.Api;
+import com.wrapper.spotify.methods.CurrentUserRequest;
 import com.wrapper.spotify.methods.UserRequest;
 import com.wrapper.spotify.models.AuthorizationCodeCredentials;
 import com.wrapper.spotify.models.User;
@@ -46,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements
     private ApiManager m_apiManager = new ApiManager();
     private final Api m_api = m_apiManager.getApi();
 
+    private UserManager m_userManager = new UserManager();
+
     private User m_currentUser;
     private String m_currentUserDisplayName = null;
 
@@ -59,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements
         setUpUI();
 
          /* Set the necessary scopes that the application will need from the user */
-        final List<String> scopes = Arrays.asList("playlist-modify-private", "playlist-modify-public", "playlist-read-private", "playlist-read-collaborative", "user-read-currently-playing", "user-read-recently-played");
+        final List<String> scopes = Arrays.asList("user-library-modify", "playlist-modify-private", "user-read-private", "streaming", "playlist-modify-public", "playlist-read-private", "playlist-read-collaborative", "user-read-currently-playing", "user-read-recently-played");
 
         /* Set a state. This is used to prevent cross site request forgeries. */
         final String state = "";
@@ -109,15 +112,20 @@ public class MainActivity extends AppCompatActivity implements
                 Futures.addCallback(authorizationCodeCredentialsFuture, new FutureCallback<AuthorizationCodeCredentials>() {
                 @Override
                 public void onSuccess(AuthorizationCodeCredentials authorizationCodeCredentials) {
-                    /* The tokens were retrieved successfully! */
-                    System.out.println("Successfully retrieved an access token! " + authorizationCodeCredentials.getAccessToken());
-                    System.out.println("The access token expires in " + authorizationCodeCredentials.getExpiresIn() + " seconds");
-                    System.out.println("Luckily, I can refresh it using this refresh token! " +     authorizationCodeCredentials.getRefreshToken());
-
+                    String accessToken = authorizationCodeCredentials.getAccessToken();
                     /* Set the access token and refresh token so that they are used whenever needed */
-                    m_api.setAccessToken(authorizationCodeCredentials.getAccessToken());
+                    m_api.setAccessToken(accessToken);
+                    m_apiManager.setAccessToken(accessToken);
                     m_api.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
                     m_apiManager.setApi(m_api);
+
+                    final CurrentUserRequest request = m_api.getMe().build();
+                    try {
+                        final User user = request.get();
+                        m_userManager.setId(user.getId());
+                    } catch (Exception e) {
+                        System.out.println("Something went wrong!" + e.getMessage());
+                    }
                 }
 
                 @Override
